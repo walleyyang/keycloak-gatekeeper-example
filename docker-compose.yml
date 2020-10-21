@@ -1,0 +1,67 @@
+version: '3.1'
+services:
+
+#  haproxy:
+#    image: haproxy:latest
+#    ports:
+#      - 80:80
+#    hostname: haproxy
+
+  postgres:
+    image: postgres:latest
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - nachowifi
+
+  keycloak:
+    image: jboss/keycloak:latest
+    hostname: keycloak
+    ports:
+      - 9990:8080
+      #- 9991:8443
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres:5432
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_PASSWORD: password
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+    networks:
+      - nachowifi
+    depends_on:
+      - postgres
+
+  gatekeeper:
+    image: bitnami/keycloak-gatekeeper:latest
+    hostname: gatekeeper
+    ports:
+      - 8080:8080
+    command: /keycloak-gatekeeper --config /opt/bitnami/keycloak-gatekeeper/gatekeeper.yml
+    volumes:
+      - ./config/gatekeeper.yml:/opt/bitnami/keycloak-gatekeeper/gatekeeper.yml:ro
+    networks:
+      - nachowifi
+    depends_on:
+      - keycloak
+
+  helloworld:
+    image: helloworld:latest
+    hostname: helloworld
+    ports:
+      - 8181:8080
+    networks:
+      - nachowifi
+    depends_on:
+      - gatekeeper
+
+networks:
+  nachowifi:
