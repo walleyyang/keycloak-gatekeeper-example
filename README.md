@@ -1,6 +1,11 @@
 This is an example repository for using Keycloak and Keycloak Gatekeeper with an application behind HAProxy.
 
-Modify your local host file and add `127.0.0.1 keycloak`.
+Modify your local host file and add 
+```
+127.0.0.1 keycloak
+127.0.0.1 gatekeeper
+127.0.0.1 helloworld
+```
 
 Run `npm install`.
 
