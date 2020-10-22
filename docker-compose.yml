@@ -44,7 +44,8 @@ services:
     image: bitnami/keycloak-gatekeeper:latest
     hostname: gatekeeper
     ports:
-      - 8080:8080
+#      - 8080:8080
+      - 3000:3000
     command: /keycloak-gatekeeper --config /opt/bitnami/keycloak-gatekeeper/gatekeeper.yml
     volumes:
       - ./config/gatekeeper.yml:/opt/bitnami/keycloak-gatekeeper/gatekeeper.yml:ro
