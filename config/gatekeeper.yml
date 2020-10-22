@@ -1,13 +1,13 @@
 discovery-url: http://keycloak:8080/auth/realms/helloworld
 client-id: gatekeeper-client
 client-secret: fdc057ab-aed1-434b-94d6-f823cf32c5bc
-listen: :8080
+listen: :3000
 enable-refresh-tokens: true
 enable-default-deny: true
 # Needs to match the Valid Redirect URLs for the client in Keycloak
 # It is set to the Docker hostname gatekeeper here, but it is 127.0.0.1 in Keycloak because we modified /etc/hosts
 # This should be Keycloak Gatekeeper because we want to send the token to it
-redirection-url: http://gatekeeper:8080
+redirection-url: http://gatekeeper:3000
 # Encryption key can be any string
 encryption-key: xBtAxBtAxBtAxBtA
 # This is the url of the unsecured website
@@ -18,7 +18,15 @@ openid-provider-timeout: 60s
 # Allows helloworldrole to access all URLs except admin section
 resources:
   - uri: /*
+    methods:
+      - GET
     roles:
       - helloworldrole
-  - uri: /admin
-    white-listed: true
+    require-any-role: true
+    groups:
+      - helloworldgroup
+#  - uri: /*
+#    roles:
+#      - helloworldrole
+#  - uri: /admin
+#    white-listed: true
